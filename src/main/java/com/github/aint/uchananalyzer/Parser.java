@@ -15,8 +15,15 @@ import java.util.stream.Collectors;
  */
 public class Parser {
 
+    private static final int LAST_PAGE = 2700;
+    private static final String URL = "http://uchan.to/lp/index.php?board=all&page=";
+    private static final String TITLE_ATTRIBUTE = "title";
+    private static final String TITLE_ATTRIBUTE_VALUE = "Тред:";
+    private static final String POST_ATTRIBUTE = "id";
+    private static final String POST_ATTRIBUTE_VALUE = "post_text_";
+
     public static void main(String[] args) throws IOException {
-        Document page = Jsoup.connect("http://uchan.to/lp").get();
+        Document page = Jsoup.connect(URL + LAST_PAGE).get();
         Set<String> topics = new HashSet<>(getThreadTopics(page));
         topics.forEach(System.out::println);
 
@@ -26,12 +33,12 @@ public class Parser {
     }
 
     private static List<String> getThreadTopics(Document page) {
-        Elements topics = page.getElementsByAttributeValueContaining("title", "Тред:");
+        Elements topics = page.getElementsByAttributeValueContaining(TITLE_ATTRIBUTE, TITLE_ATTRIBUTE_VALUE);
         return topics.stream().map(t -> t.attr("title")).collect(Collectors.toList());
     }
 
     private static List<String> getPosts(Document page) {
-        return page.getElementsByAttributeValueContaining("id", "post_text_").stream()
+        return page.getElementsByAttributeValueContaining(POST_ATTRIBUTE, POST_ATTRIBUTE_VALUE).stream()
                 .map(p -> p.getElementsByTag("p"))
                 .collect(Collectors.toList())
                 .stream()
