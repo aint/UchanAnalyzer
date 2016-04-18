@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,12 +29,25 @@ public class Parser {
     private static final String TITLE_ATTRIBUTE_VALUE = "Тред:";
     private static final String POST_ATTRIBUTE = "id";
     private static final String POST_ATTRIBUTE_VALUE = "post_text_";
+    private static final String REPLY_CLASS = "reply";
+    private static final String FILE_SIZE_CLASS = "filesize";
+    private static final String P_TAG = "p";
 
     public static void main(String[] args) throws IOException {
         Document page = Jsoup.connect(URL + LAST_PAGE).get();
         Set<String> topics = new HashSet<>(getThreadTopics(page));
         topics.forEach(System.out::println);
 //        save2Json(topics);
+
+        Map<String, Boolean> map = page.getElementsByClass(REPLY_CLASS).stream()
+                .collect(Collectors.toMap(
+                        p -> p.getElementsByAttributeValueContaining(POST_ATTRIBUTE, POST_ATTRIBUTE_VALUE).stream()
+                                .map(p1 -> p1.getElementsByTag(P_TAG).text())
+                                .filter(s -> !s.isEmpty())
+                                .collect(Collectors.joining()),
+                        p -> !p.getElementsByClass(FILE_SIZE_CLASS).isEmpty(), (p1, p2) -> p1, LinkedHashMap::new));
+        map.entrySet().stream().forEach(System.out::println);
+
 
         List<String> posts = getPosts(page);
         posts.forEach(System.out::println);
