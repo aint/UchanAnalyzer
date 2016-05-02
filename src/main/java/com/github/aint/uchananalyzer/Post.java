@@ -60,4 +60,14 @@ public class Post {
         this.hasImage = hasImage;
     }
 
+    @Override
+    public String toString() {
+        return "Post{" +
+                "topic='" + topic + '\'' +
+                ", text='" + text + '\'' +
+                ", date=" + date +
+                ", hasImage=" + hasImage +
+                '}';
+    }
+
 }
