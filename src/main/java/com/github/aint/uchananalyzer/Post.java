@@ -19,13 +19,15 @@
 
 package com.github.aint.uchananalyzer;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Oleksandr Tyshkovets
  */
 public class Post {
     private String topic;
     private String text;
-    private long date;
+    private LocalDateTime date;
     private boolean hasImage;
 
     public String getTopic() {
@@ -44,11 +46,11 @@ public class Post {
         this.text = text;
     }
 
-    public long getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

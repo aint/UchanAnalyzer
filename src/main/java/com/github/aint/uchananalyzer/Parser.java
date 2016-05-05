@@ -24,17 +24,22 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +56,8 @@ public class Parser {
     private static final String REPLY_CLASS = "reply";
     private static final String FILE_SIZE_CLASS = "filesize";
     private static final String P_TAG = "p";
+    private static final Pattern PAT = Pattern.compile("\\d{4}\\.\\d{2}\\.\\d{2}\\sо\\s\\d{2}:\\d{2}");
+    public static final String NO_DATE_FOUND = "No date found";
 
     public static void main(String[] args) throws IOException {
         Document page = Jsoup.connect(URL + LAST_PAGE).get();
@@ -71,6 +78,15 @@ public class Parser {
         List<String> posts = getPosts(page);
         posts.forEach(System.out::println);
 
+    }
+
+    private static LocalDateTime getPostDate(Element element) {
+        String date = element.getElementsByTag("label").text();
+        Matcher matcher = PAT.matcher(date);
+        if (!matcher.find()) {
+            throw new IllegalStateException(NO_DATE_FOUND);
+        }
+        return LocalDateTime.parse(matcher.group(), DateTimeFormatter.ofPattern("yyyy.MM.dd о HH:mm"));
     }
 
     private static void save2Json(Collection<String> collection) {
