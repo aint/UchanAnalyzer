@@ -67,18 +67,12 @@ public class Parser {
 
         Map<String, Boolean> map = page.getElementsByClass(REPLY_CLASS).stream()
                 .collect(Collectors.toMap(
-                        p -> p.getElementsByAttributeValueContaining(POST_ATTRIBUTE, POST_ATTRIBUTE_VALUE).stream()
-                                .map(p1 -> p1.getElementsByTag(P_TAG).text())
-                                .filter(s -> !s.isEmpty())
-                                .collect(Collectors.joining()),
+                        p -> getPostText(p),
                         p -> !p.getElementsByClass(FILE_SIZE_CLASS).isEmpty(), (p1, p2) -> p1, LinkedHashMap::new));
         map.entrySet().stream().forEach(System.out::println);
 
-
-        List<String> posts = getPosts(page);
-        posts.forEach(System.out::println);
-
     }
+
 
     private static LocalDateTime getPostDate(Element element) {
         String date = element.getElementsByTag("label").text();
@@ -87,6 +81,13 @@ public class Parser {
             throw new IllegalStateException(NO_DATE_FOUND);
         }
         return LocalDateTime.parse(matcher.group(), DateTimeFormatter.ofPattern("yyyy.MM.dd о HH:mm"));
+    }
+
+    private static String getPostText(Element element) {
+        return element.getElementsByAttributeValueContaining(POST_ATTRIBUTE, POST_ATTRIBUTE_VALUE).stream()
+                .map(e -> e.getElementsByTag(P_TAG).text())
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.joining());
     }
 
     private static void save2Json(Collection<String> collection) {
@@ -112,16 +113,6 @@ public class Parser {
     private static List<String> getThreadTopics(Document page) {
         Elements topics = page.getElementsByAttributeValueContaining(TITLE_ATTRIBUTE, TITLE_ATTRIBUTE_VALUE);
         return topics.stream().map(t -> t.attr("title")).collect(Collectors.toList());
-    }
-
-    private static List<String> getPosts(Document page) {
-        return page.getElementsByAttributeValueContaining(POST_ATTRIBUTE, POST_ATTRIBUTE_VALUE).stream()
-                .map(p -> p.getElementsByTag("p"))
-                .collect(Collectors.toList())
-                .stream()
-                .map(Elements::text)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
     }
 
 }
