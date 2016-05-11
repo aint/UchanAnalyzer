@@ -33,11 +33,7 @@ import java.io.Writer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -61,15 +57,20 @@ public class Parser {
 
     public static void main(String[] args) throws IOException {
         Document page = Jsoup.connect(URL + LAST_PAGE).get();
-        Set<String> topics = new HashSet<>(getThreadTopics(page));
-        topics.forEach(System.out::println);
+//        Set<String> topics = new HashSet<>(getThreadTopics(page));
+//        topics.forEach(System.out::println);
 //        save2Json(topics);
 
-        Map<String, Boolean> map = page.getElementsByClass(REPLY_CLASS).stream()
-                .collect(Collectors.toMap(
-                        p -> getPostText(p),
-                        p -> !p.getElementsByClass(FILE_SIZE_CLASS).isEmpty(), (p1, p2) -> p1, LinkedHashMap::new));
-        map.entrySet().stream().forEach(System.out::println);
+        List<Post> posts = page.getElementsByClass(REPLY_CLASS).stream()
+                .map(element -> {
+                    Post post = new Post();
+                    post.setText(getPostText(element));
+                    post.setDate(getPostDate(element));
+                    post.setHasImage(!element.getElementsByClass(FILE_SIZE_CLASS).isEmpty());
+                    return post;
+                })
+                .collect(Collectors.toList());
+        posts.forEach(System.out::println);
 
     }
 
