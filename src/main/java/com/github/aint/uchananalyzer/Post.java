@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
  */
 public class Post {
     private String topic;
+    private String author;
     private String text;
     private LocalDateTime date;
     private boolean hasImage;
@@ -36,6 +37,14 @@ public class Post {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public String getText() {
@@ -66,6 +75,7 @@ public class Post {
     public String toString() {
         return "Post{" +
                 "topic='" + topic + '\'' +
+                ", author='" + author + '\'' +
                 ", text='" + text + '\'' +
                 ", date=" + date +
                 ", hasImage=" + hasImage +

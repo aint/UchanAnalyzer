@@ -54,6 +54,7 @@ public class Parser {
     private static final String P_TAG = "p";
     private static final Pattern PAT = Pattern.compile("\\d{4}\\.\\d{2}\\.\\d{2}\\sо\\s\\d{2}:\\d{2}");
     public static final String NO_DATE_FOUND = "No date found";
+    public static final String COMMENT_POSTER_NAME_CLASS = "commentpostername";
 
     public static void main(String[] args) throws IOException {
         Document page = Jsoup.connect(URL + LAST_PAGE).get();
@@ -65,6 +66,7 @@ public class Parser {
                 .map(element -> {
                     Post post = new Post();
                     post.setText(getPostText(element));
+                    post.setAuthor(getPostAuthor(element));
                     post.setDate(getPostDate(element));
                     post.setHasImage(!element.getElementsByClass(FILE_SIZE_CLASS).isEmpty());
                     return post;
@@ -74,6 +76,9 @@ public class Parser {
 
     }
 
+    private static String getPostAuthor(Element element) {
+        return element.getElementsByClass(COMMENT_POSTER_NAME_CLASS).text();
+    }
 
     private static LocalDateTime getPostDate(Element element) {
         String date = element.getElementsByTag("label").text();
