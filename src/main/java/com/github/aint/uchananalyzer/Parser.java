@@ -44,7 +44,8 @@ import java.util.stream.Collectors;
 public class Parser {
 
     private static final int LAST_PAGE = 2700;
-    private static final String URL = "http://uchan.to/lp/index.php?board=all&page=";
+    private static final String UCHAN_LP_URL = "http://uchan.to/lp/";
+    private static final String UCHAN_LP_PAGE_URL = "http://uchan.to/lp/index.php?board=all&page=";
     private static final String TITLE_ATTRIBUTE = "title";
     private static final String TITLE_ATTRIBUTE_VALUE = "Тред:";
     private static final String POST_ATTRIBUTE = "id";
@@ -55,9 +56,12 @@ public class Parser {
     private static final Pattern PAT = Pattern.compile("\\d{4}\\.\\d{2}\\.\\d{2}\\sо\\s\\d{2}:\\d{2}");
     public static final String NO_DATE_FOUND = "No date found";
     public static final String COMMENT_POSTER_NAME_CLASS = "commentpostername";
+    public static final String FONT_SIZE_ATTRIBUTE = "size";
+    public static final String FONT_SIZE_ATTRIBUTE_VALUE = "4";
 
     public static void main(String[] args) throws IOException {
-        Document page = Jsoup.connect(URL + LAST_PAGE).get();
+        String lastPage = getLastPage(Jsoup.connect(UCHAN_LP_URL).get());
+        Document page = Jsoup.connect(UCHAN_LP_PAGE_URL + lastPage).get();
 //        Set<String> topics = new HashSet<>(getThreadTopics(page));
 //        topics.forEach(System.out::println);
 //        save2Json(topics);
@@ -119,6 +123,11 @@ public class Parser {
     private static List<String> getThreadTopics(Document page) {
         Elements topics = page.getElementsByAttributeValueContaining(TITLE_ATTRIBUTE, TITLE_ATTRIBUTE_VALUE);
         return topics.stream().map(t -> t.attr("title")).collect(Collectors.toList());
+    }
+
+    private static String getLastPage(Document page) {
+        String lastPage = page.getElementsByAttributeValue(FONT_SIZE_ATTRIBUTE, FONT_SIZE_ATTRIBUTE_VALUE).text();
+        return lastPage.substring(lastPage.lastIndexOf(" ") + 1);
     }
 
 }
