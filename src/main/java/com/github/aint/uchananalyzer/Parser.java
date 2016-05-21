@@ -58,6 +58,7 @@ public class Parser {
     public static final String COMMENT_POSTER_NAME_CLASS = "commentpostername";
     public static final String FONT_SIZE_ATTRIBUTE = "size";
     public static final String FONT_SIZE_ATTRIBUTE_VALUE = "4";
+    public static final String REMOVE_POST_ID_REFERENCE_REGEX = ">>\\d{1,}";
 
     public static void main(String[] args) throws IOException {
         String lastPage = getLastPage(Jsoup.connect(UCHAN_LP_URL).get());
@@ -96,6 +97,7 @@ public class Parser {
     private static String getPostText(Element element) {
         return element.getElementsByAttributeValueContaining(POST_ATTRIBUTE, POST_ATTRIBUTE_VALUE).stream()
                 .map(e -> e.getElementsByTag(P_TAG).text())
+                .map(s -> s.replaceAll(REMOVE_POST_ID_REFERENCE_REGEX, ""))
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining());
     }
