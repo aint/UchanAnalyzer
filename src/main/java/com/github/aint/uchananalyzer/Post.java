@@ -19,67 +19,20 @@
 
 package com.github.aint.uchananalyzer;
 
+import lombok.Data;
+import lombok.NonNull;
+
 import java.time.LocalDateTime;
 
 /**
  * @author Oleksandr Tyshkovets
  */
-public class Post {
+
+public @Data class Post {
     private String topic;
-    private String author;
-    private String text;
-    private LocalDateTime date;
-    private boolean hasImage;
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public boolean isHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(boolean hasImage) {
-        this.hasImage = hasImage;
-    }
-
-    @Override
-    public String toString() {
-        return "Post{" +
-                "topic='" + topic + '\'' +
-                ", author='" + author + '\'' +
-                ", text='" + text + '\'' +
-                ", date=" + date +
-                ", hasImage=" + hasImage +
-                '}';
-    }
+    @NonNull private String author;
+    @NonNull private String text;
+    @NonNull private LocalDateTime date;
+    @NonNull private boolean hasImage;
 
 }

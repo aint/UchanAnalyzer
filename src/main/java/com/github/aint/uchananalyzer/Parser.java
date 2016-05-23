@@ -68,14 +68,12 @@ public class Parser {
 //        save2Json(topics);
 
         List<Post> posts = page.getElementsByClass(REPLY_CLASS).stream()
-                .map(element -> {
-                    Post post = new Post();
-                    post.setText(getPostText(element));
-                    post.setAuthor(getPostAuthor(element));
-                    post.setDate(getPostDate(element));
-                    post.setHasImage(!element.getElementsByClass(FILE_SIZE_CLASS).isEmpty());
-                    return post;
-                })
+                .map(element -> new Post(
+                        getPostAuthor(element),
+                        getPostText(element),
+                        getPostDate(element),
+                        !element.getElementsByClass(FILE_SIZE_CLASS).isEmpty()
+                ))
                 .collect(Collectors.toList());
         posts.forEach(System.out::println);
 
