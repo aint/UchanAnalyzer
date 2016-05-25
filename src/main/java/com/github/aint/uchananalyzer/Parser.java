@@ -76,6 +76,7 @@ public class Parser {
                 ))
                 .collect(Collectors.toList());
         posts.forEach(System.out::println);
+        save2Json(posts, lastPage);
 
     }
 
@@ -100,17 +101,20 @@ public class Parser {
                 .collect(Collectors.joining());
     }
 
-    private static void save2Json(Collection<String> collection) {
+    private static void save2Json(Collection<Post> posts, String pageNumber) {
         JsonArray array = new JsonArray();
-        for (String str : collection) {
+        for (Post post : posts) {
             JsonObject innerJson = new JsonObject();
-            innerJson.addProperty("topic", str);
+            innerJson.addProperty("author", post.getAuthor());
+            innerJson.addProperty("text", post.getText());
+            innerJson.addProperty("date", post.getDate().toString());
+            innerJson.addProperty("image", post.isHasImage());
             array.add(innerJson);
         }
         JsonObject json = new JsonObject();
-        json.add(String.valueOf(LAST_PAGE), array);
+        json.add(pageNumber, array);
 
-        try (Writer writer = new FileWriter(String.valueOf(LAST_PAGE) + ".json")) {
+        try (Writer writer = new FileWriter(pageNumber + ".json")) {
             new GsonBuilder()
                     .setPrettyPrinting()
                     .create()
