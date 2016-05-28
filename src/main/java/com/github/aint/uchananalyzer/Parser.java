@@ -59,6 +59,7 @@ public class Parser {
     public static final String FONT_SIZE_ATTRIBUTE = "size";
     public static final String FONT_SIZE_ATTRIBUTE_VALUE = "4";
     public static final String REMOVE_POST_ID_REFERENCE_REGEX = ">>\\d{1,}";
+    public static final String YOUTUBE_AS_ATTACHED_FILE_PATTERN = "Файл: -(0 B, 0x0)";
 
     public static void main(String[] args) throws IOException {
         String lastPage = getLastPage(Jsoup.connect(UCHAN_LP_URL).get());
@@ -72,7 +73,7 @@ public class Parser {
                         getPostAuthor(element),
                         getPostText(element),
                         getPostDate(element),
-                        !element.getElementsByClass(FILE_SIZE_CLASS).isEmpty()
+                        isPostHasImage(element)
                 ))
                 .collect(Collectors.toList());
         posts.forEach(System.out::println);
@@ -99,6 +100,11 @@ public class Parser {
                 .map(s -> s.replaceAll(REMOVE_POST_ID_REFERENCE_REGEX, ""))
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining());
+    }
+
+    private static boolean isPostHasImage(Element element) {
+        Elements fileElement = element.getElementsByClass(FILE_SIZE_CLASS);
+        return !fileElement.isEmpty() && !YOUTUBE_AS_ATTACHED_FILE_PATTERN.equals(fileElement.text());
     }
 
     private static void save2Json(Collection<Post> posts, String pageNumber) {
