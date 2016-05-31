@@ -29,8 +29,13 @@ import java.time.LocalDateTime;
  */
 
 public @Data class Post {
+    public enum Board {
+        B, INT, ERO, GIF, X, A, COS, EXP, FFD, IG, LIT, MUZ, PK, PR, R, SHO, TV, UKR, VG, WAR, SVN
+    }
+
     private String topic;
     @NonNull private String author;
+    @NonNull private Board board;
     @NonNull private String text;
     @NonNull private LocalDateTime date;
     @NonNull private boolean hasImage;

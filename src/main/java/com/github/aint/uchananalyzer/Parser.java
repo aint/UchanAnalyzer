@@ -19,6 +19,7 @@
 
 package com.github.aint.uchananalyzer;
 
+import com.github.aint.uchananalyzer.Post.Board;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -60,6 +61,8 @@ public class Parser {
     public static final String FONT_SIZE_ATTRIBUTE_VALUE = "4";
     public static final String REMOVE_POST_ID_REFERENCE_REGEX = ">>\\d{1,}";
     public static final String YOUTUBE_AS_ATTACHED_FILE_PATTERN = "Файл: -(0 B, 0x0)";
+    public static final String REFLINK_CLASS = "reflink";
+    public static final String HREF_ATTRIBUTE = "href";
 
     public static void main(String[] args) throws IOException {
         String lastPage = getLastPage(Jsoup.connect(UCHAN_LP_URL).get());
@@ -71,6 +74,7 @@ public class Parser {
         List<Post> posts = page.getElementsByClass(REPLY_CLASS).stream()
                 .map(element -> new Post(
                         getPostAuthor(element),
+                        getPostBoard(element),
                         getPostText(element),
                         getPostDate(element),
                         isPostHasImage(element)
@@ -100,6 +104,14 @@ public class Parser {
                 .map(s -> s.replaceAll(REMOVE_POST_ID_REFERENCE_REGEX, ""))
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining());
+    }
+
+    private static Board getPostBoard(Element element) {
+        String postLink = element.getElementsByClass(REFLINK_CLASS).first().children().first().attr(HREF_ATTRIBUTE);
+        System.out.println(postLink);
+        String board = postLink.split("/")[1].toUpperCase();
+        System.out.println(board);
+        return Board.valueOf(board);
     }
 
     private static boolean isPostHasImage(Element element) {
