@@ -19,25 +19,25 @@
 
 package com.github.aint.uchananalyzer;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 
 import java.time.LocalDateTime;
 
 /**
  * @author Oleksandr Tyshkovets
  */
-
+@AllArgsConstructor
 public @Data class Post {
     public enum Board {
         B, INT, ERO, GIF, X, A, COS, EXP, FFD, IG, LIT, MUZ, PK, PR, R, SHO, TV, UKR, VG, WAR, SVN
     }
 
-    @NonNull private String author;
-    @NonNull private Board board;
-    @NonNull private String text;
-    @NonNull private LocalDateTime date;
-    @NonNull private String link;
-    @NonNull private boolean hasImage;
+    private String author;
+    private Board board;
+    private String text;
+    private LocalDateTime date;
+    private String link;
+    private boolean hasImage;
 
 }

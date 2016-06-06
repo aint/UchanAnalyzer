@@ -77,6 +77,7 @@ public class Parser {
                         getPostBoard(element),
                         getPostText(element),
                         getPostDate(element),
+                        "",
                         isPostHasImage(element)
                 ))
                 .collect(Collectors.toList());
